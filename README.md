@@ -1,1 +1,1 @@
-# LOGIN_API
+Formulário de login/registro com json server para consumo e envio de requisições para json local.
