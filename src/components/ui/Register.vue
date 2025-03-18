@@ -2,9 +2,12 @@
     <div class="register-form">
         <h2>Registro</h2>
         <input type="text" v-model="userName" placeholder="Insira seu nome de usuário">
+        <p v-if="!userName" class="emptyField">{{ emptyFieldMessage }}</p>
         <input type="text" v-model="userPassword" placeholder="Insira sua senha">
+        <p v-if="!userPassword" class="emptyField">{{ emptyFieldMessage }}</p>
         <input type="text" v-model="confirmPassword" placeholder="Confirme sua senha">
-        <button @click="registerUser">Registrar-se</button>
+        <p v-if="!confirmPassword" class="emptyField">{{ emptyFieldMessage }}</p>
+        <button :disabled="!userName || !userPassword || !confirmPassword" @click="registerUser">Registrar-se</button>
     </div>
 </template>
 
@@ -14,27 +17,34 @@ import { ref } from 'vue';
 const userName = ref('');
 const userPassword = ref('');
 const confirmPassword = ref('');
+const emptyFieldMessage = 'Campo em branco'
 
 function registerUser() {
     if (userPassword.value === confirmPassword.value) {
-        setUser();
+        setUser(userName.value, userPassword.value);
         clearForm(userName, userPassword, confirmPassword);
-        alert('usuário criado');
         return;
     }
     alert('as senhas não correspondem')
 }
 
-async function setUser() {
+async function setUser(username, password) {
     try {
+        const response = await fetch(`http://localhost:3000/users?name=${username}`);
+        const data = await response.json();
+
+        if (data.length > 0) {
+            alert('usuário já existe')
+        }
+        alert('usuário criado');
         return await fetch('http://localhost:3000/users', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                name: userName.value,
-                password: userPassword.value
+                name: username,
+                password: password
             })
         })
     } catch (e) {
@@ -47,7 +57,6 @@ function clearForm(...args) {
         arg.value = '';
     })
 }
-
 
 </script>
 
@@ -88,5 +97,10 @@ function clearForm(...args) {
             opacity: 90%;
         }
     }
+}
+
+.emptyField {
+    color: red;
+    font-size: .8em;
 }
 </style>
