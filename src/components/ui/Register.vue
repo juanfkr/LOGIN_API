@@ -34,7 +34,8 @@ async function setUser(username, password) {
         const data = await response.json();
 
         if (data.length > 0) {
-            alert('usuário já existe')
+            alert('usuário já existe');
+            return;
         }
         alert('usuário criado');
         return await fetch('http://localhost:3000/users', {
@@ -52,10 +53,8 @@ async function setUser(username, password) {
     }
 }
 
-function clearForm(...args) {
-    args.forEach((arg) => {
-        arg.value = '';
-    })
+function clearForm(...inputs) {
+    inputs.forEach(input => input.value = '');
 }
 
 </script>

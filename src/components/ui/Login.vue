@@ -1,14 +1,37 @@
 <template>
     <div class="login-form">
         <h2>Login</h2>
-        <input type="text" name="" id="" placeholder="Insira seu nome de usuário">
-        <input type="text" name="" id="" placeholder="Insira sua senha">
-        <button>Acessar</button>
+        <input type="text" v-model="username" placeholder="Insira sua senha">
+        <input type="text" v-model="password" placeholder="Insira seu nome de usuário">
+        <button @click="loginUser">Acessar</button>
     </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 
+const username = ref('');
+const password = ref('');
+
+async function loginUser() {
+    try {
+        const response = await fetch('http://localhost:3000/users')
+        const data = await response.json();
+        
+        // Usando find para localizar o usuário correto
+        const foundUser = data.find(user => 
+            user.name === username.value && user.password === password.value
+        );
+        
+        if (foundUser) {
+            alert('login realizado');
+        } else {
+            alert('seu nome ou senha está errado');
+        }
+    } catch(e) {
+        console.log(e.message)
+    }
+}
 </script>
 
 <style scoped>
